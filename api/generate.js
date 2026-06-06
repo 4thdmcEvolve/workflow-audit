@@ -84,7 +84,7 @@ Return exactly this structure:
     const brevoResult = await addToBrevo(contact, answers, report);
     console.log('Brevo result:', JSON.stringify(brevoResult));
 
-    return res.status(200).json({ report, brevoStatus: brevoResult });
+    return res.status(200).json({ report });
 
   } catch (err) {
     console.error('Generate error:', err);
@@ -99,6 +99,7 @@ async function addToBrevo(contact, answers, report) {
 
   const notes = [
     'Business: ' + contact.businessName,
+    'Phone: ' + contact.phone,
     'Lead Source: Workflow Audit Tool',
     'Date: ' + new Date().toISOString().split('T')[0],
     '--- AUDIT ANSWERS ---',
@@ -122,7 +123,6 @@ async function addToBrevo(contact, answers, report) {
     attributes: {
       FIRSTNAME: firstName,
       LASTNAME: lastName,
-      SMS: contact.phone,
       NOTES: notes
     },
     listIds: [13],
