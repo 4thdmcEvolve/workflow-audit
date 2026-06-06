@@ -14,14 +14,11 @@ function getIP(req) {
 function checkRateLimit(ip) {
   const now = Date.now();
   const record = ipRequests.get(ip);
-
   if (!record || now - record.windowStart > WINDOW_MS) {
     ipRequests.set(ip, { count: 1, windowStart: now });
     return true;
   }
-
   if (record.count >= RATE_LIMIT) return false;
-
   record.count++;
   return true;
 }
@@ -95,28 +92,37 @@ Return exactly this structure:
 }
 
 async function addToBrevo(contact, answers, report) {
+  const nameParts = contact.name.trim().split(' ');
+  const firstName = nameParts[0] || contact.name;
+  const lastName = nameParts.slice(1).join(' ') || '';
+
+  const notes = [
+    'Business: ' + contact.businessName,
+    'Lead Source: Workflow Audit Tool',
+    'Date: ' + new Date().toISOString().split('T')[0],
+    '--- AUDIT ANSWERS ---',
+    'Business Type: ' + answers.s0,
+    'Team Size: ' + answers.s1,
+    'Weekly Leads: ' + answers.s2,
+    'Follow-up Speed: ' + answers.s3,
+    'Time Drains: ' + answers.s4,
+    'Tech Setup: ' + answers.s5,
+    'Revenue Situation: ' + answers.s6,
+    '90-Day Goal: ' + (answers.s7 || 'Not specified'),
+    '--- AUDIT RESULTS ---',
+    'Gap 1: ' + (report.gaps[0] ? report.gaps[0].title : ''),
+    'Gap 2: ' + (report.gaps[1] ? report.gaps[1].title : ''),
+    'Gap 3: ' + (report.gaps[2] ? report.gaps[2].title : ''),
+    'Next Step: ' + (report.next_step || '')
+  ].join('\n');
+
   const brevoPayload = {
     email: contact.email,
-    firstName: contact.name,
     attributes: {
-      FIRSTNAME: contact.name,
+      FIRSTNAME: firstName,
+      LASTNAME: lastName,
       SMS: contact.phone,
-      BUSINESS_NAME: contact.businessName,
-      PHONE: contact.phone,
-      LEAD_SOURCE: 'Workflow Audit Tool',
-      BUSINESS_TYPE: answers.s0,
-      TEAM_SIZE: answers.s1,
-      WEEKLY_LEADS: answers.s2,
-      FOLLOWUP_SPEED: answers.s3,
-      TIME_DRAINS: answers.s4,
-      TECH_SETUP: answers.s5,
-      REVENUE_SITUATION: answers.s6,
-      GOAL_90_DAY: answers.s7 || 'Not specified',
-      AUDIT_GAP_1: report.gaps[0]?.title || '',
-      AUDIT_GAP_2: report.gaps[1]?.title || '',
-      AUDIT_GAP_3: report.gaps[2]?.title || '',
-      AUDIT_NEXT_STEP: report.next_step || '',
-      AUDIT_DATE: new Date().toISOString().split('T')[0]
+      NOTES: notes
     },
     listIds: [13],
     updateEnabled: true
