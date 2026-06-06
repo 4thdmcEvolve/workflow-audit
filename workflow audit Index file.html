@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Business Workflow Audit | 4THDMC | EVOLVE LLC</title>
+  <meta name="description" content="Find out exactly where your business is losing time and money. Free AI-powered workflow audit from 4THDMC | EVOLVE LLC.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8f7f4;
+      color: #1a1a1a;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .brand {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      color: #C9A84C;
+      margin-bottom: 10px;
+    }
+
+    .header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #1B3A6B;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .header p {
+      font-size: 15px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 2rem;
+      border: 1px solid #e8e8e4;
+    }
+
+    .progress-wrap {
+      margin-bottom: 1.75rem;
+    }
+
+    .progress-bar {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar span {
+      height: 4px;
+      flex: 1;
+      border-radius: 2px;
+      background: #e8e8e4;
+      transition: background .3s;
+    }
+
+    .progress-bar span.done { background: #1B3A6B; }
+    .progress-bar span.active { background: #C9A84C; }
+
+    .progress-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      color: #999;
+    }
+
+    .step { display: none; }
+    .step.visible { display: block; }
+
+    .step-q {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1B3A6B;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .step-hint {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+
+    .opts { display: flex; flex-direction: column; gap: 8px; }
+
+    .opt {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1.5px solid #e8e8e4;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      user-select: none;
+    }
+
+    .opt:hover { border-color: #C9A84C; background: #fdfcf8; }
+    .opt.sel { border-color: #1B3A6B; background: #f0f4fb; }
+
+    .opt-indicator {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color .15s, background .15s;
+    }
+
+    .opt-indicator.square { border-radius: 4px; }
+    .opt.sel .opt-indicator { border-color: #1B3A6B; background: #1B3A6B; }
+
+    .opt-dot {
+      width: 8px;
+      height: 8px;
+      background: #fff;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .opt-indicator.square .opt-dot { border-radius: 1px; }
+    .opt.sel .opt-dot { display: block; }
+
+    .opt-text {
+      font-size: 14px;
+      color: #2a2a2a;
+      line-height: 1.4;
+      padding-top: 1px;
+    }
+
+    .form-group { margin-bottom: 1rem; }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      color: #555;
+      margin-bottom: 6px;
+    }
+
+    .form-group label .opt-label { color: #999; font-weight: 400; }
+
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #e8e8e4;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      transition: border-color .15s;
+      outline: none;
+    }
+
+    .form-group input:focus, .form-group textarea:focus {
+      border-color: #1B3A6B;
+    }
+
+    .form-group textarea { height: 80px; resize: vertical; }
+
+    .form-required {
+      font-size: 12px;
+      color: #C9A84C;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.75rem;
+    }
+
+    .btn {
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background .15s, transform .1s;
+      border: none;
+    }
+
+    .btn:active { transform: scale(.98); }
+
+    .btn-back {
+      background: transparent;
+      border: 1.5px solid #e8e8e4;
+      color: #666;
+    }
+
+    .btn-back:hover { background: #f5f5f3; }
+
+    .btn-next {
+      background: #1B3A6B;
+      color: #fff;
+    }
+
+    .btn-next:hover { background: #152e56; }
+
+    .btn-generate {
+      background: #C9A84C;
+      color: #fff;
+      font-size: 15px;
+      padding: 12px 28px;
+    }
+
+    .btn-generate:hover { background: #b8963e; }
+
+    .btn-book {
+      display: inline-block;
+      background: #C9A84C;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      transition: background .15s;
+      margin-top: 1rem;
+    }
+
+    .btn-book:hover { background: #b8963e; }
+
+    .err {
+      font-size: 13px;
+      color: #dc2626;
+      margin-top: 8px;
+      min-height: 18px;
+    }
+
+    .loader {
+      text-align: center;
+      padding: 3rem 0;
+      display: none;
+    }
+
+    .loader.visible { display: block; }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid #e8e8e4;
+      border-top-color: #1B3A6B;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      margin: 0 auto 1.25rem;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loader-txt { font-size: 14px; color: #888; }
+    .loader-sub { font-size: 12px; color: #bbb; margin-top: 6px; }
+
+    .report { display: none; }
+    .report.visible { display: block; }
+
+    .report-brand {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      color: #C9A84C;
+      margin-bottom: 12px;
+    }
+
+    .report-greeting {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1B3A6B;
+      border-left: 3px solid #C9A84C;
+      padding-left: 14px;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+
+    .report-summary {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 1.75rem;
+    }
+
+    .gaps-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      color: #999;
+      margin-bottom: 10px;
+    }
+
+    .gap-card {
+      border: 1px solid #e8e8e4;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+
+    .gap-rank {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      color: #C9A84C;
+      margin-bottom: 4px;
+    }
+
+    .gap-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1B3A6B;
+      margin-bottom: 6px;
+    }
+
+    .gap-desc {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .gap-badge {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #1B3A6B;
+      background: #e8edf5;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .next-step-card {
+      background: #f8f7f4;
+      border-radius: 8px;
+      padding: 16px 18px;
+      margin: 1.5rem 0;
+    }
+
+    .next-step-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .07em;
+      color: #999;
+      margin-bottom: 8px;
+    }
+
+    .next-step-text {
+      font-size: 15px;
+      color: #1a1a1a;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+
+    .cta-card {
+      border: 1.5px solid #C9A84C;
+      border-radius: 12px;
+      padding: 20px 22px;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .cta-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1B3A6B;
+      margin-bottom: 8px;
+    }
+
+    .cta-sub {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 4px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 11px;
+      color: #bbb;
+      line-height: 1.8;
+    }
+
+    .footer a { color: #C9A84C; text-decoration: none; }
+
+    @media (max-width: 480px) {
+      .card { padding: 1.5rem 1.25rem; }
+      .header h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <div class="brand">4THDMC | EVOLVE LLC</div>
+    <h1>Business Workflow Audit</h1>
+    <p>8 questions. AI-powered report. See exactly where your business is losing time and money — free.</p>
+  </div>
+
+  <div class="card">
+
+    <div id="form-area">
+      <div class="progress-wrap">
+        <div class="progress-bar" id="prog">
+          <span class="active" id="p0"></span>
+          <span id="p1"></span>
+          <span id="p2"></span>
+          <span id="p3"></span>
+          <span id="p4"></span>
+          <span id="p5"></span>
+          <span id="p6"></span>
+          <span id="p7"></span>
+          <span id="p8"></span>
+        </div>
+        <div class="progress-label" id="prog-label">Step 1 of 9</div>
+      </div>
+
+      <div id="s0" class="step visible">
+        <p class="step-q">What type of service business do you run?</p>
+        <div class="opts" id="o0">
+          <div class="opt" data-val="Home services (plumbing, HVAC, electrical, cleaning, landscaping)"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Home services (plumbing, HVAC, electrical, cleaning, landscaping)</span></div>
+          <div class="opt" data-val="Health and wellness (fitness, therapy, chiropractic, salon, spa)"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Health and wellness (fitness, therapy, chiropractic, salon, spa)</span></div>
+          <div class="opt" data-val="Professional services (consulting, accounting, legal, insurance, real estate)"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Professional services (consulting, accounting, legal, insurance, real estate)</span></div>
+          <div class="opt" data-val="Food and hospitality (restaurant, catering, food truck, event venue)"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Food and hospitality (restaurant, catering, food truck, event venue)</span></div>
+          <div class="opt" data-val="Other local service business"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Other local service business</span></div>
+        </div>
+      </div>
+
+      <div id="s1" class="step">
+        <p class="step-q">How many employees or team members do you have?</p>
+        <div class="opts" id="o1">
+          <div class="opt" data-val="Solo — just me"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Solo — just me</span></div>
+          <div class="opt" data-val="2-5 employees or contractors"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">2-5 employees or contractors</span></div>
+          <div class="opt" data-val="6-10 employees"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">6-10 employees</span></div>
+          <div class="opt" data-val="11-15 employees"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">11-15 employees</span></div>
+        </div>
+      </div>
+
+      <div id="s2" class="step">
+        <p class="step-q">How many new leads or inquiries do you get each week?</p>
+        <div class="opts" id="o2">
+          <div class="opt" data-val="1-5 new leads per week"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">1-5 per week</span></div>
+          <div class="opt" data-val="6-15 new leads per week"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">6-15 per week</span></div>
+          <div class="opt" data-val="16-30 new leads per week"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">16-30 per week</span></div>
+          <div class="opt" data-val="30+ new leads per week"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">30+ per week</span></div>
+        </div>
+      </div>
+
+      <div id="s3" class="step">
+        <p class="step-q">How fast do you typically follow up with a new lead?</p>
+        <div class="opts" id="o3">
+          <div class="opt" data-val="Within minutes — I have a system for this"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Within minutes — I have a system for this</span></div>
+          <div class="opt" data-val="Within a few hours when I remember"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Within a few hours when I remember</span></div>
+          <div class="opt" data-val="End of the day if I get to it"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">End of the day if I get to it</span></div>
+          <div class="opt" data-val="Honestly, some leads fall through the cracks"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Honestly, some leads fall through the cracks</span></div>
+        </div>
+      </div>
+
+      <div id="s4" class="step">
+        <p class="step-q">Where does your time disappear most?</p>
+        <p class="step-hint">Select all that apply.</p>
+        <div class="opts" id="o4">
+          <div class="opt ck" data-val="Following up with leads manually"><div class="opt-indicator square"><div class="opt-dot"></div></div><span class="opt-text">Following up with leads manually</span></div>
+          <div class="opt ck" data-val="Sending the same onboarding emails to every new client"><div class="opt-indicator square"><div class="opt-dot"></div></div><span class="opt-text">Sending the same onboarding emails to every new client</span></div>
+          <div class="opt ck" data-val="Asking for reviews and referrals and forgetting"><div class="opt-indicator square"><div class="opt-dot"></div></div><span class="opt-text">Asking for reviews and referrals (and forgetting)</span></div>
+          <div class="opt ck" data-val="Answering the same customer questions every day"><div class="opt-indicator square"><div class="opt-dot"></div></div><span class="opt-text">Answering the same customer questions every day</span></div>
+          <div class="opt ck" data-val="Training new employees because everything lives in my head"><div class="opt-indicator square"><div class="opt-dot"></div></div><span class="opt-text">Training new employees (everything lives in my head)</span></div>
+          <div class="opt ck" data-val="Creating content and staying consistent on social media"><div class="opt-indicator square"><div class="opt-dot"></div></div><span class="opt-text">Creating content and staying consistent on social media</span></div>
+          <div class="opt ck" data-val="Writing proposals and quotes from scratch each time"><div class="opt-indicator square"><div class="opt-dot"></div></div><span class="opt-text">Writing proposals and quotes from scratch each time</span></div>
+        </div>
+      </div>
+
+      <div id="s5" class="step">
+        <p class="step-q">What best describes your current tech setup?</p>
+        <div class="opts" id="o5">
+          <div class="opt" data-val="Phone, text, and email — no formal systems"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Phone, text, and email — no formal systems</span></div>
+          <div class="opt" data-val="A few tools but they are not connected to each other"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">A few tools but they are not connected to each other</span></div>
+          <div class="opt" data-val="I have a CRM or platform but am not using it fully"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">I have a CRM or platform but am not using it fully</span></div>
+          <div class="opt" data-val="Multiple connected platforms that work reasonably well"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Multiple connected platforms that work reasonably well</span></div>
+        </div>
+      </div>
+
+      <div id="s6" class="step">
+        <p class="step-q">How would you describe your current revenue situation?</p>
+        <div class="opts" id="o6">
+          <div class="opt" data-val="Inconsistent — good months and bad months"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Inconsistent — good months and bad months</span></div>
+          <div class="opt" data-val="Steady but not growing"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Steady but not growing</span></div>
+          <div class="opt" data-val="Growing but operations feel chaotic"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Growing but operations feel chaotic</span></div>
+          <div class="opt" data-val="Both solid — I want to scale"><div class="opt-indicator"><div class="opt-dot"></div></div><span class="opt-text">Both solid — I want to scale</span></div>
+        </div>
+      </div>
+
+      <div id="s7" class="step">
+        <p class="step-q">Anything else you want us to know?</p>
+        <p class="step-hint">Optional — the more specific you are, the sharper your report.</p>
+        <div class="form-group">
+          <textarea id="goal" placeholder="Example: I want every new lead to get a response within 5 minutes even when I am on a job..."></textarea>
+        </div>
+      </div>
+
+      <div id="s8" class="step">
+        <p class="step-q">Almost there — where should we send your report?</p>
+        <p class="step-hint">Your audit generates instantly. We use this to follow up if you want to talk through your results.</p>
+        <div class="form-required">* Required fields</div>
+        <div class="form-group">
+          <label>First name *</label>
+          <input type="text" id="c-name" placeholder="Your first name">
+        </div>
+        <div class="form-group">
+          <label>Email address *</label>
+          <input type="email" id="c-email" placeholder="you@yourbusiness.com">
+        </div>
+        <div class="form-group">
+          <label>Phone number *</label>
+          <input type="tel" id="c-phone" placeholder="(555) 555-5555">
+        </div>
+        <div class="form-group">
+          <label>Business name *</label>
+          <input type="text" id="c-biz" placeholder="Your business name">
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="btn btn-back" id="back-btn" style="visibility:hidden" onclick="goBack()">Back</button>
+        <button class="btn btn-next" id="next-btn" onclick="goNext()">Next</button>
+      </div>
+      <div class="err" id="err"></div>
+    </div>
+
+    <div id="loader" class="loader">
+      <div class="spinner"></div>
+      <div class="loader-txt" id="loader-txt">Analyzing your workflow gaps...</div>
+      <div class="loader-sub">This takes about 10 seconds</div>
+    </div>
+
+    <div id="report" class="report">
+      <div class="report-brand">4THDMC | EVOLVE LLC — WORKFLOW AUDIT RESULTS</div>
+      <div class="report-greeting" id="r-greeting"></div>
+      <div class="report-summary" id="r-summary"></div>
+      <div class="gaps-label">YOUR TOP WORKFLOW GAPS</div>
+      <div id="r-gaps"></div>
+      <div class="next-step-card">
+        <div class="next-step-label">YOUR NEXT STEP</div>
+        <div class="next-step-text" id="r-next"></div>
+      </div>
+      <div class="cta-card">
+        <div class="cta-title">Ready to fix this?</div>
+        <div class="cta-sub" id="r-hook"></div>
+        <div class="cta-sub" style="margin-top:6px">The <strong>Begin engagement</strong> is $500 flat. 90 minutes. A specific action plan built around your business. No retainer required to start.</div>
+        <a id="calendly-btn" href="https://calendly.com/4thdmc/consultations-and-121s" target="_blank" class="btn-book">Book your free 30-minute consult</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <p>© 2026 4THDMC | EVOLVE LLC. All Rights Reserved.</p>
+    <p><a href="https://4thdmc.com" target="_blank">4thdmc.com</a> &nbsp;|&nbsp; <a href="https://brrteaching.com" target="_blank">brrteaching.com</a></p>
+    <p style="margin-top:6px;font-size:10px">This audit uses AI to analyze your answers. Results are informational and do not constitute a consulting engagement.</p>
+  </div>
+
+</div>
+
+<script>
+  var step = 0;
+  var totalSteps = 9;
+  var answers = {};
+  var loaderMsgs = [
+    'Analyzing your workflow gaps...',
+    'Ranking by revenue impact...',
+    'Building your personalized report...',
+    'Almost ready...'
+  ];
+  var loaderIdx = 0;
+  var loaderTimer;
+
+  function updateProgress() {
+    for (var i = 0; i < totalSteps; i++) {
+      var el = document.getElementById('p' + i);
+      if (!el) continue;
+      el.className = i < step ? 'done' : (i === step ? 'active' : '');
+    }
+    document.getElementById('prog-label').textContent = 'Step ' + (step + 1) + ' of ' + totalSteps;
+  }
+
+  function getVal(s) {
+    if (s === 4) {
+      var checked = document.querySelectorAll('#o4 .opt.sel');
+      return checked.length ? Array.from(checked).map(function(e){ return e.getAttribute('data-val'); }).join(', ') : null;
+    }
+    if (s === 7) return 'ok';
+    if (s === 8) return 'contact';
+    var oId = 'o' + s;
+    var el = document.querySelector('#' + oId + ' .opt.sel');
+    return el ? el.getAttribute('data-val') : null;
+  }
+
+  function validateContact() {
+    var name = document.getElementById('c-name').value.trim();
+    var email = document.getElementById('c-email').value.trim();
+    var phone = document.getElementById('c-phone').value.trim();
+    var biz = document.getElementById('c-biz').value.trim();
+    if (!name) { showErr('Please enter your first name.'); return false; }
+    if (!email || !email.includes('@')) { showErr('Please enter a valid email address.'); return false; }
+    if (!phone) { showErr('Please enter your phone number.'); return false; }
+    if (!biz) { showErr('Please enter your business name.'); return false; }
+    return true;
+  }
+
+  function showErr(msg) {
+    document.getElementById('err').textContent = msg;
+  }
+
+  function goNext() {
+    document.getElementById('err').textContent = '';
+
+    if (step < 8) {
+      if (step !== 7) {
+        var val = getVal(step);
+        if (!val) { showErr('Please make a selection to continue.'); return; }
+        answers['s' + step] = val;
+      } else {
+        answers['s7'] = document.getElementById('goal').value.trim() || 'Not specified';
+      }
+      document.getElementById('s' + step).classList.remove('visible');
+      step++;
+      document.getElementById('s' + step).classList.add('visible');
+      document.getElementById('back-btn').style.visibility = 'visible';
+      updateProgress();
+      if (step === 8) {
+        document.getElementById('next-btn').textContent = 'Generate my audit';
+        document.getElementById('next-btn').className = 'btn btn-generate';
+      }
+    } else {
+      if (!validateContact()) return;
+      runAudit();
+    }
+  }
+
+  function goBack() {
+    document.getElementById('err').textContent = '';
+    if (step > 0) {
+      document.getElementById('s' + step).classList.remove('visible');
+      step--;
+      document.getElementById('s' + step).classList.add('visible');
+      updateProgress();
+      if (step === 0) document.getElementById('back-btn').style.visibility = 'hidden';
+      if (step < 8) {
+        document.getElementById('next-btn').textContent = 'Next';
+        document.getElementById('next-btn').className = 'btn btn-next';
+      }
+    }
+  }
+
+  document.querySelectorAll('#o0 .opt, #o1 .opt, #o2 .opt, #o3 .opt, #o5 .opt, #o6 .opt').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      opt.closest('.opts').querySelectorAll('.opt').forEach(function(o){ o.classList.remove('sel'); });
+      opt.classList.add('sel');
+    });
+  });
+
+  document.querySelectorAll('#o4 .opt').forEach(function(opt) {
+    opt.addEventListener('click', function() { opt.classList.toggle('sel'); });
+  });
+
+  async function runAudit() {
+    var contact = {
+      name: document.getElementById('c-name').value.trim(),
+      email: document.getElementById('c-email').value.trim(),
+      phone: document.getElementById('c-phone').value.trim(),
+      businessName: document.getElementById('c-biz').value.trim()
+    };
+
+    document.getElementById('form-area').style.display = 'none';
+    document.getElementById('loader').classList.add('visible');
+
+    loaderTimer = setInterval(function() {
+      loaderIdx = (loaderIdx + 1) % loaderMsgs.length;
+      document.getElementById('loader-txt').textContent = loaderMsgs[loaderIdx];
+    }, 2000);
+
+    try {
+      var res = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ answers: answers, contact: contact })
+      });
+
+      var data = await res.json();
+      clearInterval(loaderTimer);
+      document.getElementById('loader').classList.remove('visible');
+
+      if (data.report) {
+        renderReport(data.report, contact.name);
+      } else {
+        renderFallback();
+      }
+    } catch(e) {
+      clearInterval(loaderTimer);
+      document.getElementById('loader').classList.remove('visible');
+      renderFallback();
+    }
+  }
+
+  function renderReport(r, name) {
+    document.getElementById('r-greeting').textContent = r.greeting;
+    document.getElementById('r-summary').textContent = r.summary;
+    document.getElementById('r-next').textContent = r.next_step;
+    document.getElementById('r-hook').textContent = r.begin_hook;
+
+    var gapsHtml = r.gaps.map(function(g) {
+      return '<div class="gap-card">'
+        + '<div class="gap-rank">GAP #' + g.rank + '</div>'
+        + '<div class="gap-title">' + g.title + '</div>'
+        + '<div class="gap-desc">' + g.description + '</div>'
+        + '<span class="gap-badge">' + g.impact + '</span>'
+        + '</div>';
+    }).join('');
+
+    document.getElementById('r-gaps').innerHTML = gapsHtml;
+    document.getElementById('report').classList.add('visible');
+  }
+
+  function renderFallback() {
+    document.getElementById('r-greeting').textContent = 'Your audit is complete.';
+    document.getElementById('r-summary').textContent = 'Your answers have been captured. Book your free consult and we will walk through your top workflow gaps together.';
+    document.getElementById('r-gaps').innerHTML = '';
+    document.getElementById('r-next').textContent = 'Book the 30-minute consult — that is the fastest path from here to a real action plan.';
+    document.getElementById('r-hook').textContent = 'Based on what you shared, the Begin engagement will give you a clear diagnosis and a specific roadmap built around your business.';
+    document.getElementById('report').classList.add('visible');
+  }
+</script>
+</body>
+</html>
