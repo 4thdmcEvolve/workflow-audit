@@ -81,13 +81,14 @@ Return exactly this structure:
 
     const report = JSON.parse(raw);
 
-    await addToBrevo(contact, answers, report);
+    const brevoResult = await addToBrevo(contact, answers, report);
+    console.log('Brevo result:', JSON.stringify(brevoResult));
 
-    return res.status(200).json({ report });
+    return res.status(200).json({ report, brevoStatus: brevoResult });
 
   } catch (err) {
     console.error('Generate error:', err);
-    return res.status(500).json({ error: 'Failed to generate report' });
+    return res.status(500).json({ error: 'Failed to generate report', detail: err.message });
   }
 }
 
@@ -128,6 +129,8 @@ async function addToBrevo(contact, answers, report) {
     updateEnabled: true
   };
 
+  console.log('Sending to Brevo:', JSON.stringify({ email: contact.email, listIds: [13] }));
+
   const brevoRes = await fetch('https://api.brevo.com/v3/contacts', {
     method: 'POST',
     headers: {
@@ -137,8 +140,9 @@ async function addToBrevo(contact, answers, report) {
     body: JSON.stringify(brevoPayload)
   });
 
-  if (!brevoRes.ok) {
-    const errText = await brevoRes.text();
-    console.error('Brevo error:', errText);
-  }
+  const statusCode = brevoRes.status;
+  const responseText = await brevoRes.text();
+  console.log('Brevo status:', statusCode, 'response:', responseText);
+
+  return { statusCode, responseText };
 }
